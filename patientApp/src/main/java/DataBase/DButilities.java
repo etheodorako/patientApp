@@ -7,15 +7,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import Helpers.Patient;
-
+import Helpers.User;
 
 public abstract class DButilities {
 
 	public static List<Patient> getPatients() {
-		
+
 		DBconnection connection;
 		List<Patient> list = new ArrayList<Patient>();
-		
+
 		try {
 			connection = new DBconnection();
 
@@ -23,67 +23,63 @@ public abstract class DButilities {
 
 			ResultSet rs = connection.get_statement().executeQuery(query);
 
-
 			while (rs.next()) {
-				list.add(new Patient(rs.getString(1), rs.getString(2), rs.getString(3),
-						rs.getDate(4), rs.getString(5)));
+				list.add(
+						new Patient(rs.getString(1), rs.getString(2), rs.getString(3), rs.getDate(4), rs.getString(5)));
 			}
-			
+
 			connection.close();
-			
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 
 		return list;
-		
+
 	}
-	
+
 	public static Patient getPatientById(String schoolID) {
-		
+
 		DBconnection connection;
 		Patient p = null;
-		
+
 		try {
 			connection = new DBconnection();
 
-			String query = "SELECT * FROM PATIENT WHERE SCHOOL_ID = '"+ schoolID +"' ;";
+			String query = "SELECT * FROM PATIENT WHERE SCHOOL_ID = '" + schoolID + "' ;";
 
 			ResultSet rs = connection.get_statement().executeQuery(query);
 			rs.next();
 
-			p = new Patient(rs.getString(1), rs.getString(2), rs.getString(3),
-						rs.getDate(4), rs.getString(5), rs.getString(6), rs.getString(7),
-						rs.getString(8), rs.getString(9), rs.getString(10), rs.getString(11),
-						rs.getString(12));
-			
-			
+			p = new Patient(rs.getString(1), rs.getString(2), rs.getString(3), rs.getDate(4), rs.getString(5),
+					rs.getString(6), rs.getString(7), rs.getString(8), rs.getString(9), rs.getString(10),
+					rs.getString(11), rs.getString(12));
+
 			connection.close();
-			
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 
 		return p;
-		
+
 	}
-	
+
 	public static void updatePatient(Patient p) {
 		System.out.println(p);
 		DBconnection connection;
-		
+
 		try {
 			connection = new DBconnection();
-			
+
 			String query = "UPDATE PATIENT_LIB.PATIENT SET NAME =?,"
 					+ "SURNAME =?, BIRTH =?, CLASS =?, TEL_FATHER =?, TEL_MOTHER =?,"
 					+ "TEL_PERSONAL_DOCTOR =?, PARENT_EMAIL =?, KNOWN_ALLERGIES =?,"
-					+ "KNOWN_HEALTH_ISSUES =?, SPECIAL_NEEDS =?"
-					+ " WHERE SCHOOL_ID =? ; ";
-			
+					+ "KNOWN_HEALTH_ISSUES =?, SPECIAL_NEEDS =?" + " WHERE SCHOOL_ID =? ; ";
+
 			PreparedStatement preparedStmt = (PreparedStatement) connection.get_connection().prepareStatement(query);
-			preparedStmt.setString(1,p.getName());
-			preparedStmt.setString(2,p.getSurname());
+			preparedStmt.setString(1, p.getName());
+			preparedStmt.setString(2, p.getSurname());
 			preparedStmt.setDate(3, p.getBirth());
 			preparedStmt.setString(4, p.getClS());
 			preparedStmt.setString(5, p.getTel_father());
@@ -95,13 +91,37 @@ public abstract class DButilities {
 			preparedStmt.setString(11, p.getSpecialNeeds());
 			preparedStmt.setString(12, p.getSchoolID());
 
-
 			// execute the preparedstatement
 			preparedStmt.execute();
-			
-			
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public static User login(String username, String password) {
+
+		DBconnection connection;
+		User user = null;
+
+		try {
+			connection = new DBconnection();
+
+			String query = "SELECT * FROM LOGIN WHERE USERNAME = '" + username + "' AND PASSWORD = '" + password
+					+ "' ;";
+
+			ResultSet rs = connection.get_statement().executeQuery(query);
+			
+			if (rs.next())
+				user = new User(rs.getInt(3), rs.getString(1), rs.getString(2), rs.getString(4), rs.getString(5));
+
+			connection.close();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return user;
+
 	}
 }

@@ -29,7 +29,7 @@ public class DBconnection {
                 
 		URL = "jdbc:mysql://localhost:3306/PATIENT_LIB" ;
 		USER = "root" ; 
-		PASS = "etheodorako921230";
+		PASS = "password";
 		conn = (Connection) DriverManager.getConnection(URL, USER, PASS);
 		stmt = conn.createStatement();
 		
